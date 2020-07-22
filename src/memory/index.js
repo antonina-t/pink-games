@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import MemoryCard from './MemoryCard';
+import MemoryRow from './MemoryRow';
 import { v4 as uuidv4 } from 'uuid';
 import './index.css';
 
@@ -111,11 +111,7 @@ function Memory() {
   const rowsCount = cardNames.length / 2;
   for (let i = 0; i < rowsCount; i++) {
     rows.push((
-      <div className="memory-row">
-        {cards.slice(i * rowsCount, i * rowsCount + rowsCount).map(
-          card => <MemoryCard onClick={() => onCardClick(card)} key={card.id} {...card}/>
-        )}
-      </div>
+      <MemoryRow cards={cards.slice(rowsCount * i, rowsCount * (i + 1))} onClick={onCardClick} key={i.toString()}></MemoryRow>
     ));
   }
 
