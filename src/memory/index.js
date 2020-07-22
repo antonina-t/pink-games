@@ -22,8 +22,8 @@ function generateCards() {
       isFlipped: true,
       canFlip: true
     }))
-    .map(e => [e, {id: uuidv4(), name: e.name, isFlipped: true, canFlip: true}])
-    .flat()
+    //.flatMap(e => [e, {id: uuidv4(), name: e.name, isFlipped: true, canFlip: true}]) // Doesn't work in EDGE
+	.reduce((acc, e) => acc.concat([e, {id: uuidv4(), name: e.name, isFlipped: true, canFlip: true}]), [])
     .sort(() => Math.random() - 0.5);
 }
 
