@@ -1,5 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
-import Container from 'react-bootstrap/Container';
+import React, {useEffect, useState} from 'react';
 import MemoryCard from './MemoryCard';
 import { v4 as uuidv4 } from 'uuid';
 import './index.css';
@@ -108,20 +107,21 @@ function Memory() {
 		setSecondCard(null);
 	}
 
+  let rows = [];
+  const rowsCount = cardNames.length / 2;
+  for (let i = 0; i < rowsCount; i++) {
+    rows.push((
+      <div className="memory-row">
+        {cards.slice(i * rowsCount, i * rowsCount + rowsCount).map(
+          card => <MemoryCard onClick={() => onCardClick(card)} key={card.id} {...card}/>
+        )}
+      </div>
+    ));
+  }
+
   return (
     <div className="memory-container">
-      <div className="memory-row">
-        {cards.slice(0,4).map(card => <MemoryCard onClick={() => onCardClick(card)} key={card.id} {...card}/>)}
-      </div>
-      <div className="memory-row">
-        {cards.slice(4,8).map(card => <MemoryCard onClick={() => onCardClick(card)} key={card.id} {...card}/>)}
-      </div>
-      <div className="memory-row">
-        {cards.slice(8,12).map(card => <MemoryCard onClick={() => onCardClick(card)} key={card.id} {...card}/>)}
-      </div>
-      <div className="memory-row">
-        {cards.slice(12,16).map(card => <MemoryCard onClick={() => onCardClick(card)} key={card.id} {...card}/>)}
-      </div>
+      {rows}
     </div>
   );
 }
