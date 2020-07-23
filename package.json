@@ -13,7 +13,7 @@
   "scripts": {
     "create": "webpack",
     "start": "webpack-dev-server --open",
-    "deploy": "git push origin `git subtree split --prefix dist master`:gh-pages --force"
+    "deploy": "git subtree split --branch gh-pages --prefix dist/"
   },
   "keywords": [],
   "author": "",
