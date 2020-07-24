@@ -62,5 +62,28 @@
 }
 .memory-icon {
     display: table-cell;
-    color: rgb(233, 73, 100);
+}
+.memory-pink {
+    color: rgb(255, 107, 175);
+}
+.memory-red {
+    color: rgb(255, 65, 65);
+}
+.memory-orange {
+    color: rgb(253, 142, 63);
+}
+.memory-yellow {
+    color: rgb(255, 237, 79);
+}
+.memory-green {
+    color: rgb(83, 224, 37);
+}
+.memory-cyan {
+    color: rgb(63, 253, 200);
+}
+.memory-blue {
+    color: rgb(106, 117, 255);
+}
+.memory-purple {
+    color: rgb(226, 65, 255);
 }

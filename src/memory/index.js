@@ -4,23 +4,24 @@ import StatusBar from "./StatusBar";
 import { v4 as uuidv4 } from "uuid";
 import "./index.css";
 
-const cardNames = [
-  "grimace",
-  "meh-rolling-eyes",
-  "sad-tear",
-  "grin-tongue-squint",
-  "grin-beam-sweat",
-  "dizzy",
-  "kiss-wink-heart",
-  "angry",
+const cardData = [
+  {name: "grimace", color: "memory-yellow"},
+  {name: "meh-rolling-eyes", color: "memory-cyan"},
+  {name: "sad-tear", color: "memory-blue"},
+  {name: "grin-tongue-squint", color: "memory-orange"},
+  {name: "grin-beam-sweat", color: "memory-purple"},
+  {name: "dizzy", color: "memory-pink"},
+  {name: "kiss-wink-heart", color: "memory-red"},
+  {name: "angry", color: "memory-green"},
 ];
 
 function generateCards() {
   return (
-    cardNames
-      .map((cardName) => ({
+    cardData
+      .map(({name, color}) => ({
         id: uuidv4(),
-        name: cardName,
+		name: name,
+		color: color,
         isFlipped: false,
         canFlip: true,
       }))
@@ -29,7 +30,7 @@ function generateCards() {
         (acc, e) =>
           acc.concat([
             e,
-            { id: uuidv4(), name: e.name, isFlipped: false, canFlip: true },
+            { id: uuidv4(), name: e.name, color: e.color, isFlipped: false, canFlip: true },
           ]),
         []
       )
@@ -84,7 +85,7 @@ function Memory() {
     setCardIsFlipped(secondCard.id, true);
     resetFirstAndSecondCards();
     if (cards.every((card) => card.isFlipped)) {
-		setWin(true);
+      setWin(true);
     }
   }
 
@@ -118,20 +119,20 @@ function Memory() {
   }, [startTime]);
 
   useEffect(() => {
-	if (win) {
-		clearInterval(timer);
-		setTimer(null);
-	}
+    if (win) {
+      clearInterval(timer);
+      setTimer(null);
+    }
   }, [win]);
 
   function restart() {
-	setCards(generateCards());
+    setCards(generateCards());
     resetFirstAndSecondCards();
-	clearInterval(timer);
-	setTimer(null);
-	setStartTime(0);
-	setTime(0);
-	setWin(false);
+    clearInterval(timer);
+    setTimer(null);
+    setStartTime(0);
+    setTime(0);
+    setWin(false);
   }
 
   function onCardClick(card) {
@@ -158,7 +159,7 @@ function Memory() {
   }
 
   let rows = [];
-  const rowsCount = cardNames.length / 2;
+  const rowsCount = cardData.length / 2;
   for (let i = 0; i < rowsCount; i++) {
     rows.push(
       <MemoryRow
