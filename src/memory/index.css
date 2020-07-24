@@ -31,10 +31,6 @@
     margin-left: 0.5%;
     margin-right: 0.5%;
     perspective: 600px;
-    -webkit-perspective: 600px;
-    -moz-perspective: 600px;
-    -o-perspective: 600px;
-    -ms-perspective: 600px;
 }
 .memory-card {
     width: 100%;
@@ -45,10 +41,6 @@
 }
 .memory-card.is-flipped {
     transform: rotateY(180deg);
-    -webkit-transform: rotateY(180deg);
-    -moz-transform: rotateY(180deg);
-    -o-transform: rotateY(180deg);
-    -ms-transform: rotateY(180deg);
   }
 .memory-card-face {
     border: solid 2px #929090;
@@ -62,13 +54,10 @@
     height: 100%;
     width: 100%;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden; /* Safari */
 }
 .memory-card-face--back {
     transform: rotateY(180deg);
-    -webkit-transform: rotateY(180deg); /* WebKit */
-    -moz-transform: rotateY(180deg); /* Mozilla */
-    -o-transform: rotateY(180deg); /* Opera */
-    -ms-transform: rotateY(180deg); /* Internet Explorer */
     background: white;
 }
 .memory-icon {
