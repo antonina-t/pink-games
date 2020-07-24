@@ -65,19 +65,6 @@ function Memory() {
     );
   }
 
-  // Show all cards for 3 seconds at start
-  /*
-	useEffect(() => {
-		setTimeout(() => {
-			let index = 0;
-			for (const card of cards) {
-				setTimeout(() => setCardIsFlipped(card.id, false), index++ * 100);
-			}
-			setTimeout(() => setCanFlip(true), cards.length * 100);
-		}, 3000);
-	}, []);
-	*/
-
   function onSuccessGuess() {
     setCardCanFlip(firstCard.id, false);
     setCardCanFlip(secondCard.id, false);
@@ -172,7 +159,7 @@ function Memory() {
 
   return (
     <div className="memory-container">
-      <StatusBar win={win} time={time} onRestart={() => restart()}></StatusBar>
+      <StatusBar win={win} timeMs={time} onRestart={() => restart()}></StatusBar>
       {rows}
     </div>
   );
