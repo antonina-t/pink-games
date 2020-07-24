@@ -19,19 +19,19 @@ function generateCards() {
     .map(cardName => ({
       id: uuidv4(),
       name: cardName,
-      isFlipped: true,
+      isFlipped: false,
       canFlip: true
     }))
     //.flatMap(e => [e, {id: uuidv4(), name: e.name, isFlipped: true, canFlip: true}]) // Doesn't work in EDGE
-	.reduce((acc, e) => acc.concat([e, {id: uuidv4(), name: e.name, isFlipped: true, canFlip: true}]), [])
+	.reduce((acc, e) => acc.concat([e, {id: uuidv4(), name: e.name, isFlipped: false, canFlip: true}]), [])
     .sort(() => Math.random() - 0.5);
 }
 
 function Memory() {
   const [cards, setCards] = useState(generateCards());
-	const [canFlip, setCanFlip] = useState(true);
+  const [canFlip, setCanFlip] = useState(true);
   const [firstCard, setFirstCard] = useState(null);
-	const [secondCard, setSecondCard] = useState(null);
+  const [secondCard, setSecondCard] = useState(null);
 
 	function setCardIsFlipped(cardID, isFlipped) {
 		setCards(prev => prev.map(c => {
@@ -49,7 +49,8 @@ function Memory() {
 		}));
   }
 
-  // showcase
+  // Show all cards for 3 seconds at start
+  /*
 	useEffect(() => {
 		setTimeout(() => {
 			let index = 0;
@@ -59,6 +60,7 @@ function Memory() {
 			setTimeout(() => setCanFlip(true), cards.length * 100);
 		}, 3000);
 	}, []);
+	*/
   
   function onSuccessGuess() {
 		setCardCanFlip(firstCard.id, false);
@@ -83,10 +85,10 @@ function Memory() {
   }
   
   useEffect(() => {
-		if (!firstCard || !secondCard)
-			return;
-		(firstCard.name === secondCard.name) ? onSuccessGuess() : onFailureGuess();
-	}, [firstCard, secondCard]);
+	if (!firstCard || !secondCard)
+		return;
+	(firstCard.name === secondCard.name) ? onSuccessGuess() : onFailureGuess();
+  }, [firstCard, secondCard]);
 
   function onCardClick(card) {
 		if (!canFlip)
