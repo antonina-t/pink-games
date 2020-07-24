@@ -1,0 +1,13 @@
+.status-container {
+    display: flex;
+    margin-bottom: 10px;
+}
+.timer {
+    flex: 1;
+}
+.win {
+    flex: 1;
+}
+.reset {
+    flex: 0;
+}
