@@ -1,0 +1,31 @@
+.tc-container {
+    margin-top: 4vw;
+    display: flex;
+    justify-content: center;
+}
+@media only screen and (orientation: landscape) {
+    .tc-container {
+        display: none;       
+    }
+}
+.tc-grid {
+    display: grid;
+    grid-template-columns: 12vh 12vh 12vh;
+    grid-template-rows: 12vh 12vh 12vh;
+    grid-template-areas:
+     ". up ."
+     "left . right"
+     ". down ."
+}
+.tc-up {
+    grid-area: up;
+}
+.tc-right {
+    grid-area: right;
+}
+.tc-down {
+    grid-area: down;
+}
+.tc-left {
+    grid-area: left;
+}

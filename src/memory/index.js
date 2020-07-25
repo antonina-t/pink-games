@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MemoryRow from "./MemoryRow";
-import StatusBar from "./StatusBar";
+import StatusBar from "../StatusBar";
 import { v4 as uuidv4 } from "uuid";
 import "./index.css";
 
@@ -159,7 +159,7 @@ function Memory() {
 
   return (
     <div className="memory-container">
-      <StatusBar win={win} timeMs={time} onRestart={() => restart()}></StatusBar>
+      <StatusBar status={win ? "You won!" : null} timeMs={time} onRestart={() => restart()}></StatusBar>
       {rows}
     </div>
   );
