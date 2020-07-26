@@ -3,6 +3,8 @@ import StatusBar from "../StatusBar";
 import { v4 as uuidv4 } from "uuid";
 import "./index.css";
 import MemoryCard from "./MemoryCard";
+import LeaderboardModal from "../LeaderboardModal";
+import formatTime from "../utils.js";
 
 const cardData = [
   { name: "grimace", color: "memory-yellow" },
@@ -52,6 +54,7 @@ function Memory() {
   const [timer, setTimer] = useState(null);
   const [startTime, setStartTime] = useState(0);
   const [time, setTime] = useState(0);
+  const [showModal, setShowModal] = useState(false);
 
   function setCardIsFlipped(cardID, isFlipped) {
     setCards((prev) =>
@@ -115,6 +118,7 @@ function Memory() {
     if (win) {
       clearInterval(timer);
       setTimer(null);
+      setShowModal(true);
     }
   }, [win]);
 
@@ -151,11 +155,51 @@ function Memory() {
     setSecondCard(null);
   }
 
+  function loadLeaderboard() {
+    console.log("Loading leaderboard...");
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    return auth
+      .signInAnonymously()
+      .then(() => db.collection("memory").get())
+      .then((querySnapshot) => {
+        let leaderboard = [];
+        querySnapshot.forEach((doc) => {
+          leaderboard.push(doc.data());
+        });
+        leaderboard = leaderboard
+          .sort((e1, e2) => e1.timeMs - e2.timeMs)
+          .slice(0, 10)
+          .map((entry) => entry.name + ": " + formatTime(entry.timeMs));
+        return leaderboard;
+      })
+      .catch(function (error) {
+        console.log("Error getting leaderboard: ", error);
+      });
+  }
+
+  function saveScore(nickname) {
+    if (!nickname) return;
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    auth
+      .signInAnonymously()
+      .then(() =>
+        db.collection("memory").add({
+          name: nickname,
+          timeMs: time,
+        })
+      )
+      .catch(function (error) {
+        console.log("Error saving score: ", error);
+      });
+  }
+
   return (
     <div className="game-container">
       <StatusBar
-        status={win ? "You won!" : null}
         timeMs={time}
+        showLeaderboard={() => setShowModal(true)}
         onRestart={() => restart()}
       ></StatusBar>
       <div className="memory-grid">
@@ -167,6 +211,14 @@ function Memory() {
           />
         ))}
       </div>
+      <LeaderboardModal
+        title={win && "Congratulations, you won!"}
+        message={win && "Your time was " + formatTime(time) + "."}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        loadLeaderboard={loadLeaderboard}
+        saveScore={win && saveScore}
+      ></LeaderboardModal>
     </div>
   );
 }

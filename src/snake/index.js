@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Point from "./Point";
 import StatusBar from "../StatusBar";
 import TouchController from "./TouchController";
+import LeaderboardModal from "../LeaderboardModal";
+import formatTime from "../utils.js";
 import "./index.css";
 
 const width = 20;
@@ -87,6 +89,7 @@ function Snake() {
     time: 0,
     isRunning: true,
   });
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (game.isOver) return;
@@ -106,6 +109,7 @@ function Snake() {
     setTimer((timer) => {
       return { ...timer, isRunning: !game.isOver };
     });
+    if (game.isOver) setShowModal(true);
   }, [game]);
 
   useEffect(() => {
@@ -168,6 +172,50 @@ function Snake() {
     setTimer({ startTime: Date.now(), time: 0 });
   }
 
+  function loadLeaderboard() {
+    console.log("Loading leaderboard...");
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    return auth
+      .signInAnonymously()
+      .then(() => db.collection("snake").get())
+      .then((querySnapshot) => {
+        let leaderboard = [];
+        querySnapshot.forEach((doc) => {
+          leaderboard.push(doc.data());
+        });
+        console.log(leaderboard);
+        leaderboard = leaderboard
+          .sort((e1, e2) =>
+            e1.score === e2.score ? e1.timeMs - e2.timeMs : e2.score - e1.score
+          )
+          .slice(0, 10)
+          .map((entry) => entry.name + ": " + entry.score);
+        return leaderboard;
+      })
+      .catch(function (error) {
+        console.log("Error getting leaderboard: ", error);
+      });
+  }
+
+  function saveScore(nickname) {
+    if (!nickname) return;
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    auth
+      .signInAnonymously()
+      .then(() =>
+        db.collection("snake").add({
+          name: nickname,
+          timeMs: timer.time,
+          score: game.snake.tailCells.length - 1
+        })
+      )
+      .catch(function (error) {
+        console.log("Error saving score: ", error);
+      });
+  }
+
   const cells = [];
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -189,8 +237,8 @@ function Snake() {
       <StatusBar
         timeMs={timer.time}
         score={game.snake.tailCells.length - 1}
-        status={game.isOver ? "Game over!" : null}
         onRestart={restart}
+        showLeaderboard={() => setShowModal(true)}
       ></StatusBar>
       <div className="snake-grid">{cells}</div>
       <TouchController
@@ -199,6 +247,14 @@ function Snake() {
         onDown={() => addCommand("down")}
         onLeft={() => addCommand("left")}
       ></TouchController>
+      <LeaderboardModal
+        title={game.isOver &&  "Game over!"}
+        message={game.isOver && "Your score was " + (game.snake.tailCells.length - 1) + ". Your time was " + formatTime(timer.time) + "."}
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        loadLeaderboard={loadLeaderboard}
+        saveScore={game.isOver && saveScore}
+      ></LeaderboardModal>
     </div>
   );
 }

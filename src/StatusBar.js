@@ -1,22 +1,21 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
+import formatTime from "./utils.js"
 import "./StatusBar.css";
 
-function StatusBar({ timeMs, status, score, onRestart }) {
-  const totalSeconds = Math.floor(timeMs / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds - minutes * 60;
-
+function StatusBar({ timeMs, score, onRestart, showLeaderboard }) {
   return (
     <div>
       <div className="status-container">
-        {status && <p className="text">{status}&nbsp;</p>}
         {score != null && <p className="text">Score: {score}&nbsp;</p>}
         <p className="text">
-          Time: {minutes > 0 ? minutes + "m " : ""} {seconds}s
+          Time: {formatTime(timeMs)}
         </p>
-        <Button variant="light" className="reset" onClick={onRestart}>
+        <Button variant="light" className="rightButton" onClick={onRestart}>
           Restart
+        </Button>
+        <Button variant="light" className="rightButton" onClick={showLeaderboard}>
+          Leaderboard
         </Button>
       </div>
     </div>
