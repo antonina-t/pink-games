@@ -55,6 +55,7 @@ function Memory() {
   const [startTime, setStartTime] = useState(0);
   const [time, setTime] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [gameId, setGameId] = useState(uuidv4());
 
   function setCardIsFlipped(cardID, isFlipped) {
     setCards((prev) =>
@@ -129,7 +130,8 @@ function Memory() {
     setTimer(null);
     setStartTime(0);
     setTime(0);
-    setWin(false);
+	setWin(false);
+	setGameId(uuidv4());
   }
 
   function onCardClick(card) {
@@ -185,7 +187,7 @@ function Memory() {
     auth
       .signInAnonymously()
       .then(() =>
-        db.collection("memory").add({
+        db.collection("memory").doc(gameId).set({
           name: nickname,
           timeMs: time,
         })

@@ -4,6 +4,7 @@ import StatusBar from "../StatusBar";
 import TouchController from "./TouchController";
 import LeaderboardModal from "../LeaderboardModal";
 import formatTime from "../utils.js";
+import { v4 as uuidv4 } from "uuid";
 import "./index.css";
 
 const width = 20;
@@ -90,6 +91,7 @@ function Snake() {
     isRunning: true,
   });
   const [showModal, setShowModal] = useState(false);
+  const [gameId, setGameId] = useState(uuidv4());
 
   useEffect(() => {
     if (game.isOver) return;
@@ -170,6 +172,7 @@ function Snake() {
   function restart() {
     setGame(generateGame());
     setTimer({ startTime: Date.now(), time: 0 });
+    setGameId(uuidv4());
   }
 
   function loadLeaderboard() {
@@ -203,7 +206,7 @@ function Snake() {
     auth
       .signInAnonymously()
       .then(() =>
-        db.collection("snake").add({
+        db.collection("snake").doc(gameId).set({
           name: nickname,
           timeMs: timer.time,
           score: game.snake.tailCells.length - 1
