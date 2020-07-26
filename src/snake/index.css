@@ -1,9 +1,4 @@
 @media only screen and (orientation: landscape) {
-  .snake-container {
-    width: 40vw;
-    margin-left: 30vw;
-    margin-top: 1vw;
-  }
   .snake-grid {
     display: grid;
     grid-template-columns: repeat(20, 2vw);
@@ -13,10 +8,6 @@
   }
 }
 @media only screen and (orientation: portrait) {
-  .snake-container {
-    width: 96vw;
-    margin: 2vw;
-  }
   .snake-grid {
     display: grid;
     grid-template-columns: repeat(20, 4.8vw);
@@ -25,20 +16,16 @@
     outline: 1px solid black;
   }
 }
-
 .snake-cell {
-  border: 1px solid rgb(208, 208, 208);
+  border: 1px solid rgb(236, 236, 236);
   background-color: white;
 }
-
 .head {
   background-color: black;
 }
-
 .tail {
   background-color: grey;
 }
-
 .food {
   background-color: red;
 }

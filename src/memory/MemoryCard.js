@@ -1,4 +1,5 @@
 import React from "react";
+import "./MemoryCard.css";
 
 function MemoryCard({ name, color, isFlipped, onClick }) {
   return (

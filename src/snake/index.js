@@ -185,7 +185,7 @@ function Snake() {
     }
   }
   return (
-    <div className="snake-container">
+    <div className="game-container">
       <StatusBar
         timeMs={timer.time}
         score={game.snake.tailCells.length - 1}

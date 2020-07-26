@@ -8,13 +8,13 @@ class Point {
   }
   move(dir) {
     switch (dir) {
-      case 'up':
+      case "up":
         return new Point(this.x, this.y - 1);
-      case 'right':
+      case "right":
         return new Point(this.x + 1, this.y);
-      case 'down':
+      case "down":
         return new Point(this.x, this.y + 1);
-      case 'left':
+      case "left":
         return new Point(this.x - 1, this.y);
     }
   }

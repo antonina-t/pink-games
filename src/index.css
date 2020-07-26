@@ -1,13 +1,8 @@
 body {
-    background: url('./images/pink-clouds-1831234.jpg') no-repeat center center fixed;
-    background-size: cover;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-}
-.text-container {
-    position: absolute;
-    top: 50%;
-    width: 100%;
-    text-align: center;
+  background: url("./images/pink-clouds-1831234.jpg") no-repeat center center
+    fixed;
+  background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
 }

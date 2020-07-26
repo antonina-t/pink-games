@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
-import MemoryRow from "./MemoryRow";
 import StatusBar from "../StatusBar";
 import { v4 as uuidv4 } from "uuid";
 import "./index.css";
+import MemoryCard from "./MemoryCard";
 
 const cardData = [
-  {name: "grimace", color: "memory-yellow"},
-  {name: "meh-rolling-eyes", color: "memory-cyan"},
-  {name: "sad-tear", color: "memory-blue"},
-  {name: "grin-tongue-squint", color: "memory-orange"},
-  {name: "grin-beam-sweat", color: "memory-purple"},
-  {name: "dizzy", color: "memory-pink"},
-  {name: "kiss-wink-heart", color: "memory-red"},
-  {name: "angry", color: "memory-green"},
+  { name: "grimace", color: "memory-yellow" },
+  { name: "meh-rolling-eyes", color: "memory-cyan" },
+  { name: "sad-tear", color: "memory-blue" },
+  { name: "grin-tongue-squint", color: "memory-orange" },
+  { name: "grin-beam-sweat", color: "memory-purple" },
+  { name: "dizzy", color: "memory-pink" },
+  { name: "kiss-wink-heart", color: "memory-red" },
+  { name: "angry", color: "memory-green" },
 ];
 
 function generateCards() {
   return (
     cardData
-      .map(({name, color}) => ({
+      .map(({ name, color }) => ({
         id: uuidv4(),
-		name: name,
-		color: color,
+        name: name,
+        color: color,
         isFlipped: false,
         canFlip: true,
       }))
@@ -30,7 +30,13 @@ function generateCards() {
         (acc, e) =>
           acc.concat([
             e,
-            { id: uuidv4(), name: e.name, color: e.color, isFlipped: false, canFlip: true },
+            {
+              id: uuidv4(),
+              name: e.name,
+              color: e.color,
+              isFlipped: false,
+              canFlip: true,
+            },
           ]),
         []
       )
@@ -145,22 +151,22 @@ function Memory() {
     setSecondCard(null);
   }
 
-  let rows = [];
-  const rowsCount = cardData.length / 2;
-  for (let i = 0; i < rowsCount; i++) {
-    rows.push(
-      <MemoryRow
-        cards={cards.slice(rowsCount * i, rowsCount * (i + 1))}
-        onClick={onCardClick}
-        key={i.toString()}
-      ></MemoryRow>
-    );
-  }
-
   return (
-    <div className="memory-container">
-      <StatusBar status={win ? "You won!" : null} timeMs={time} onRestart={() => restart()}></StatusBar>
-      {rows}
+    <div className="game-container">
+      <StatusBar
+        status={win ? "You won!" : null}
+        timeMs={time}
+        onRestart={() => restart()}
+      ></StatusBar>
+      <div className="memory-grid">
+        {cards.map((card) => (
+          <MemoryCard
+            onClick={() => onCardClick(card)}
+            key={card.id}
+            {...card}
+          />
+        ))}
+      </div>
     </div>
   );
 }
