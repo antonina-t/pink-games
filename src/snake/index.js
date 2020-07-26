@@ -6,9 +6,9 @@ import "./index.css";
 
 const width = 20;
 const height = 12;
-const initialIntervalMs = 400; 
+const initialIntervalMs = 400;
 function generateGame() {
-  const snake =  {
+  const snake = {
     headCell: new Point(width / 2, height / 2),
     tailCells: [new Point(width / 2 - 1, height / 2)],
     dir: "right",
@@ -17,8 +17,8 @@ function generateGame() {
     snake: snake,
     food: generateFood(snake),
     commands: [],
-    isOver: false
-  }
+    isOver: false,
+  };
 }
 function generateFood(snake) {
   let food = new Point(
@@ -38,7 +38,7 @@ function generateFood(snake) {
 }
 function tick(game) {
   if (game.isOver) return game;
-  const {snake, food, commands} = game;
+  const { snake, food, commands } = game;
   const command = commands[0];
   let newDir = command || snake.dir;
   if (
@@ -56,7 +56,7 @@ function tick(game) {
     newHeadCell.y >= height ||
     snake.tailCells.some((cell) => cell.equals(newHeadCell))
   ) {
-    return {...game, isOver: true};
+    return { ...game, isOver: true };
   }
   const newSnake = {
     headCell: newHeadCell,
@@ -66,14 +66,15 @@ function tick(game) {
         0,
         snake.tailCells.length - (newHeadCell.equals(food) ? 0 : 1)
       ),
-    ].flat(),
-    dir: newDir
+      //].flat(), Doesn't work in EDGE
+    ].reduce((acc, val) => acc.concat(val), []),
+    dir: newDir,
   };
   return {
-    snake : newSnake,
+    snake: newSnake,
     food: food.equals(newHeadCell) ? generateFood(newSnake) : food,
     commands: commands.slice(1),
-    isOver: game.isOver
+    isOver: game.isOver,
   };
 }
 
@@ -81,7 +82,11 @@ function Snake() {
   const [game, setGame] = useState(generateGame());
   const [intervalMs, setIntervalMs] = useState(initialIntervalMs);
   const [tailLength, setTailLength] = useState(1);
-  const [timer, setTimer] = useState({ startTime: Date.now(), time: 0, isRunning: true});
+  const [timer, setTimer] = useState({
+    startTime: Date.now(),
+    time: 0,
+    isRunning: true,
+  });
 
   useEffect(() => {
     if (game.isOver) return;
@@ -93,18 +98,21 @@ function Snake() {
 
   useEffect(() => {
     if (game.snake.tailCells.length !== tailLength) {
-      const newIntervalMs = initialIntervalMs * Math.pow(0.95, game.snake.tailCells.length / 3);
+      const newIntervalMs =
+        initialIntervalMs * Math.pow(0.95, game.snake.tailCells.length / 3);
       setIntervalMs(newIntervalMs);
       setTailLength(game.snake.tailCells.length);
     }
-    setTimer(timer => {return {...timer, isRunning: !game.isOver};});
-  }, [game])
+    setTimer((timer) => {
+      return { ...timer, isRunning: !game.isOver };
+    });
+  }, [game]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setTimer(timer => {
+      setTimer((timer) => {
         if (timer.isRunning) {
-          return {...timer, time: Date.now() - timer.startTime};
+          return { ...timer, time: Date.now() - timer.startTime };
         }
         return timer;
       });
@@ -138,7 +146,13 @@ function Snake() {
   function addCommand(newDir) {
     setGame((game) => {
       if (newDir && newDir !== game.commands[game.commands.length - 1]) {
-        return {...game, commands: [game.commands, newDir].flat()};
+        return {
+          ...game,
+          commands: [game.commands, newDir].reduce(
+            (acc, val) => acc.concat(val),
+            []
+          ),
+        };
       }
       return game;
     });
@@ -151,7 +165,7 @@ function Snake() {
 
   function restart() {
     setGame(generateGame());
-    setTimer( {startTime: Date.now(), time: 0} );
+    setTimer({ startTime: Date.now(), time: 0 });
   }
 
   const cells = [];
