@@ -184,14 +184,12 @@ function Snake() {
         querySnapshot.forEach((doc) => {
           leaderboard.push(doc.data());
         });
-        console.log(leaderboard);
-        leaderboard = leaderboard
+        return leaderboard
           .sort((e1, e2) =>
             e1.score === e2.score ? e1.timeMs - e2.timeMs : e2.score - e1.score
           )
           .slice(0, 10)
           .map((entry) => entry.name + ": " + entry.score);
-        return leaderboard;
       })
       .catch(function (error) {
         console.log("Error getting leaderboard: ", error);
