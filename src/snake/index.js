@@ -6,15 +6,25 @@ import "./index.css";
 
 const width = 20;
 const height = 12;
-function generateSnake() {
-  return {
+const initialIntervalMs = 400; 
+function generateGame() {
+  const snake =  {
     headCell: new Point(width / 2, height / 2),
     tailCells: [new Point(width / 2 - 1, height / 2)],
     dir: "right",
   };
+  return {
+    snake: snake,
+    food: generateFood(snake),
+    commands: [],
+    isOver: false
+  }
 }
 function generateFood(snake) {
-  let food = new Point(width / 2, height / 2);
+  let food = new Point(
+    Math.floor(Math.random() * width),
+    Math.floor(Math.random() * height)
+  );
   while (
     food.equals(snake.headCell) ||
     snake.tailCells.some((cell) => food.equals(cell))
@@ -26,16 +36,19 @@ function generateFood(snake) {
   }
   return food;
 }
-function moveSnake(snake, food, command) {
-  let dir = command || snake.dir;
+function tick(game) {
+  if (game.isOver) return game;
+  const {snake, food, commands} = game;
+  const command = commands[0];
+  let newDir = command || snake.dir;
   if (
     (command === "right" && snake.dir === "left") ||
     (command === "up" && snake.dir === "down") ||
     (command === "left" && snake.dir === "right") ||
     (command === "down" && snake.dir === "up")
   )
-    dir = snake.dir;
-  const newHeadCell = snake.headCell.move(dir);
+    newDir = snake.dir;
+  const newHeadCell = snake.headCell.move(newDir);
   if (
     newHeadCell.x < 0 ||
     newHeadCell.y < 0 ||
@@ -43,9 +56,9 @@ function moveSnake(snake, food, command) {
     newHeadCell.y >= height ||
     snake.tailCells.some((cell) => cell.equals(newHeadCell))
   ) {
-    return null;
+    return {...game, isOver: true};
   }
-  return {
+  const newSnake = {
     headCell: newHeadCell,
     tailCells: [
       snake.headCell,
@@ -54,41 +67,53 @@ function moveSnake(snake, food, command) {
         snake.tailCells.length - (newHeadCell.equals(food) ? 0 : 1)
       ),
     ].flat(),
-    dir: dir,
+    dir: newDir
+  };
+  return {
+    snake : newSnake,
+    food: food.equals(newHeadCell) ? generateFood(newSnake) : food,
+    commands: commands.slice(1),
+    isOver: game.isOver
   };
 }
 
 function Snake() {
-  const [snake, setSnake] = useState(generateSnake());
-  const [commands, setCommands] = useState([]);
-  const [food, setFood] = useState(generateFood(snake));
-  const [gameOver, setGameOver] = useState(false);
-  const [startTime, setStartTime] = useState(Date.now());
-  const [time, setTime] = useState(0);
+  const [game, setGame] = useState(generateGame());
+  const [intervalMs, setIntervalMs] = useState(initialIntervalMs);
+  const [tailLength, setTailLength] = useState(1);
+  const [timer, setTimer] = useState({ startTime: Date.now(), time: 0, isRunning: true});
 
   useEffect(() => {
-    if (gameOver) return;
-    const interval = setInterval(() => {
-      setTime(Date.now() - startTime);
-      const newSnake =
-        snake &&
-        moveSnake(snake, food, commands.length > 0 ? commands[0] : null);
-      if (commands.length > 0) setCommands(commands.slice(1));
-      if (newSnake) {
-        setSnake(newSnake);
-        if (food.equals(newSnake.headCell)) {
-          setFood(generateFood(newSnake));
+    if (game.isOver) return;
+    const intervalId = setInterval(() => {
+      setGame((game) => tick(game));
+    }, intervalMs);
+    return () => clearInterval(intervalId);
+  }, [intervalMs]);
+
+  useEffect(() => {
+    if (game.snake.tailCells.length !== tailLength) {
+      const newIntervalMs = initialIntervalMs * Math.pow(0.95, game.snake.tailCells.length / 3);
+      setIntervalMs(newIntervalMs);
+      setTailLength(game.snake.tailCells.length);
+    }
+    setTimer(timer => {return {...timer, isRunning: !game.isOver};});
+  }, [game])
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTimer(timer => {
+        if (timer.isRunning) {
+          return {...timer, time: Date.now() - timer.startTime};
         }
-      } else {
-        setGameOver(true);
-      }
-    }, 200 * Math.pow(0.9, Math.floor(snake.tailCells.length) / 3));
-    return () => clearInterval(interval);
-  });
+        return timer;
+      });
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   function handleKeyPress(event) {
     let newDir = null;
-    console.log(event.keyCode);
     switch (event.keyCode) {
       case 37:
       case 65:
@@ -111,9 +136,12 @@ function Snake() {
   }
 
   function addCommand(newDir) {
-    if (newDir && newDir !== commands[commands.length - 1]) {
-      setCommands([commands, newDir].flat());
-    }
+    setGame((game) => {
+      if (newDir && newDir !== game.commands[game.commands.length - 1]) {
+        return {...game, commands: [game.commands, newDir].flat()};
+      }
+      return game;
+    });
   }
 
   useEffect(() => {
@@ -122,24 +150,19 @@ function Snake() {
   });
 
   function restart() {
-    const newSnake = generateSnake();
-    setSnake(newSnake);
-    setCommands([]);
-    setFood(generateFood(newSnake));
-    setGameOver(false);
-    setStartTime(Date.now());
-    setTime(0);
+    setGame(generateGame());
+    setTimer( {startTime: Date.now(), time: 0} );
   }
 
   const cells = [];
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const p = new Point(x, y);
-      const style = p.equals(snake.headCell)
+      const style = p.equals(game.snake.headCell)
         ? " head"
-        : snake.tailCells.some((cell) => p.equals(cell))
+        : game.snake.tailCells.some((cell) => p.equals(cell))
         ? " tail"
-        : p.equals(food)
+        : p.equals(game.food)
         ? " food"
         : "";
       cells.push(
@@ -150,10 +173,10 @@ function Snake() {
   return (
     <div className="snake-container">
       <StatusBar
-        timeMs={time}
-        score={snake.tailCells.length - 1}
-        status={gameOver ? "Game over!" : null}
-        onRestart={() => restart()}
+        timeMs={timer.time}
+        score={game.snake.tailCells.length - 1}
+        status={game.isOver ? "Game over!" : null}
+        onRestart={restart}
       ></StatusBar>
       <div className="snake-grid">{cells}</div>
       <TouchController
