@@ -66,24 +66,15 @@ function Memory() {
     );
   }
 
-  function setCardCanFlip(cardID, canFlip) {
+  function onSuccessGuess() {
     setCards((prev) =>
       prev.map((c) => {
-        if (c.id !== cardID) return c;
-        return { ...c, canFlip };
+        if (c.id === firstCard.id || c.id === secondCard.id)
+          return { ...c, canFlip: false };
+        return c;
       })
     );
-  }
-
-  function onSuccessGuess() {
-    setCardCanFlip(firstCard.id, false);
-    setCardCanFlip(secondCard.id, false);
-    setCardIsFlipped(firstCard.id, true);
-    setCardIsFlipped(secondCard.id, true);
     resetFirstAndSecondCards();
-    if (cards.every((card) => card.isFlipped)) {
-      setWin(true);
-    }
   }
 
   function onFailureGuess() {
@@ -103,7 +94,7 @@ function Memory() {
   useEffect(() => {
     if (!firstCard || !secondCard) return;
     firstCard.name === secondCard.name ? onSuccessGuess() : onFailureGuess();
-  }, [firstCard, secondCard]);
+  }, [secondCard]);
 
   useEffect(() => {
     if (startTime === 0) return;
@@ -123,6 +114,12 @@ function Memory() {
     }
   }, [win]);
 
+  useEffect(() => {
+    if (cards.every((card) => !card.canFlip)) {
+      setWin(true);
+    }
+  }, [cards]);
+
   function restart() {
     setCards(generateCards());
     resetFirstAndSecondCards();
@@ -130,8 +127,8 @@ function Memory() {
     setTimer(null);
     setStartTime(0);
     setTime(0);
-	setWin(false);
-	setGameId(uuidv4());
+    setWin(false);
+    setGameId(uuidv4());
   }
 
   function onCardClick(card) {
