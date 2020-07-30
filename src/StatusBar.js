@@ -7,10 +7,12 @@ function StatusBar({ timeMs, score, onRestart, showLeaderboard }) {
   return (
     <div>
       <div className="status-container">
-        {score && <p className="text">{score}</p>}
-        <p className="text">
-          Time: {formatTime(timeMs)}
-        </p>
+        <div className="text-group">
+          <p className="text">{score}</p>
+          <p className="text">
+            Time: {formatTime(timeMs)}
+          </p>
+        </div>
         <Button variant="light" className="rightButton" onClick={onRestart}>
           Restart
         </Button>
