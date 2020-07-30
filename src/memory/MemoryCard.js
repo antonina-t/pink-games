@@ -12,7 +12,6 @@ function MemoryCard({ name, color, isFlipped, onClick }) {
         <div className="memory-card-face memory-card-face--back">
           <span
             className={"memory-icon far fa-" + name + " " + color}
-            style={{ verticalAlign: "middle" }}
           ></span>
         </div>
       </div>

@@ -7,7 +7,7 @@ function StatusBar({ timeMs, score, onRestart, showLeaderboard }) {
   return (
     <div>
       <div className="status-container">
-        {score != null && <p className="text">Score: {score}&nbsp;</p>}
+        {score && <p className="text">{score}</p>}
         <p className="text">
           Time: {formatTime(timeMs)}
         </p>

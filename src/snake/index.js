@@ -237,7 +237,7 @@ function Snake() {
     <div className="game-container">
       <StatusBar
         timeMs={timer.time}
-        score={game.snake.tailCells.length - 1}
+        score={"Score: " + (game.snake.tailCells.length - 1)}
         onRestart={restart}
         showLeaderboard={() => setShowModal(true)}
       ></StatusBar>
