@@ -108,10 +108,15 @@ function Minesweeper() {
   }, [grid]);
 
   function cellOnOpen(cell) {
+    if (gameOver) return;
     if (cell.isMine) {
       setGrid((prev) => {
         return prev.map((c) => {
-          return { ...c, isOpen: !c.isMarked };
+          return {
+            ...c,
+            isOpen: (c.x === cell.x && c.y === cell.y) || !c.isMarked,
+            isMarked: !(c.x === cell.x && c.y === cell.y) && c.isMarked,
+          };
         });
       });
     } else {
@@ -128,7 +133,7 @@ function Minesweeper() {
   }
 
   function cellOnMark(cell) {
-    if (cell.isOpen) return;
+    if (gameOver || cell.isOpen) return;
     setGrid((prev) => {
       return prev.map((c) => {
         if (c.x === cell.x && c.y === cell.y)
@@ -174,12 +179,15 @@ function Minesweeper() {
     auth
       .signInAnonymously()
       .then(() =>
-        db.collection("minesweeper").doc(gameId).set({
-          name: nickname,
-          timeMs: timer.time,
-          cells: size * size,
-          mines: mines
-        })
+        db
+          .collection("minesweeper")
+          .doc(gameId)
+          .set({
+            name: nickname,
+            timeMs: timer.time,
+            cells: size * size,
+            mines: mines,
+          })
       )
       .catch(function (error) {
         console.log("Error saving score: ", error);
@@ -199,7 +207,7 @@ function Minesweeper() {
           leaderboard.push(doc.data());
         });
         leaderboard = leaderboard
-          .filter(e => e.cells === size * size && e.mines === mines)
+          .filter((e) => e.cells === size * size && e.mines === mines)
           .sort((e1, e2) => e1.timeMs - e2.timeMs)
           .slice(0, 10)
           .map((entry) => entry.name + ": " + formatTime(entry.timeMs));
@@ -237,7 +245,10 @@ function Minesweeper() {
           ></MinesCell>
         ))}
       </div>
-      <ModeSwitch isMarkMode={isMarkMode} onChange={() => setIsMarkMode(!isMarkMode)}></ModeSwitch>
+      <ModeSwitch
+        isMarkMode={isMarkMode}
+        onChange={() => setIsMarkMode(!isMarkMode)}
+      ></ModeSwitch>
       <LeaderboardModal
         title={
           gameOver &&

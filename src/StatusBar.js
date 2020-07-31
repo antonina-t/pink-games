@@ -2,7 +2,6 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import formatTime from "./utils.js";
 import "./StatusBar.css";
-import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
 
 function StatusBar({ timeMs, score, onRestart, showLeaderboard }) {
   return (
