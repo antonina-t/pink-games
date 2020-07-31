@@ -10,21 +10,24 @@ import "./App.css";
 
 const App = () => (
   <Router>
-    <Navbar bg="light" variant="light">
+    <Navbar collapseOnSelect expand="sm" bg="light" variant="light">
       <Link to="/" className="navbar-brand">
         Games
       </Link>
-      <Nav className="mr-auto">
-        <Link to="/memory" className="nav-link">
-          Memory
-        </Link>
-        <Link to="/snake" className="nav-link">
-          Snake
-        </Link>
-        <Link to="/minesweeper" className="nav-link">
-          Minesweeper
-        </Link>
-      </Nav>
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="mr-auto">
+          <Link to="/memory" className="nav-link">
+            Memory
+          </Link>
+          <Link to="/snake" className="nav-link">
+            Snake
+          </Link>
+          <Link to="/minesweeper" className="nav-link">
+            Minesweeper
+          </Link>
+        </Nav>
+      </Navbar.Collapse>
     </Navbar>
     <Switch>
       <Route exact path="/" component={Home} />
